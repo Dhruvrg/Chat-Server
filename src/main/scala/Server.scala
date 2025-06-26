@@ -40,7 +40,7 @@ object Server {
                 option match {
                   case "a" => directMessage
                   case "b" => broadCast
-                  case "c" => println("group message")
+                  case "c" => groupMessage
                   case "d" => createGroup
                   case "e" => optionSelection
                   case "f" =>
@@ -50,17 +50,29 @@ object Server {
             }
             optionSelection
 
-            def createGroup = {
-              var groupName = ""
-              if ({ groupName = in.readLine(); groupName != null}){}
-              var groupMembersString = in.readLine()
-              if ({ groupMembersString = in.readLine(); groupMembersString != null}){}
+            def groupMessage = {
+              out.println(groups.filter((ele) => (ele._2.filter(_ == username).size) == 1).map((ele) => ele._1).mkString(","))
+              val groupName = in.readLine()
 
-//              println(s"$username create a group:- $groupName")
-//              out.println(s"Server: Group Created :- $groupName")
-//              val users: List[String] = groupMembersString.split(",").toList
-//              users.map((name) => new PrintWriter(connectedClients(name).getOutputStream, true).println(s"$username added you in group($groupName)"))
-//              groups += (groupName -> (username :: users))
+              var message = ""
+              val users: List[String] = groups(groupName).filter(_ != username)
+              while ( {message = in.readLine(); message != null && message != "exit"}) {
+                users.map((user) => new PrintWriter(connectedClients(user).getOutputStream, true).println(s"Group($groupName):- $username :- $message"))
+                println(s"Group($groupName):- $username :- $message")
+              }
+
+              optionSelection
+            }
+
+            def createGroup = {
+              val groupName = in.readLine()
+              val groupMembersString = in.readLine()
+
+              println(s"$username create a group:- $groupName")
+              out.println(s"Server: Group Created :- $groupName")
+              val users: List[String] = groupMembersString.split(",").toList
+              users.map((name) => new PrintWriter(connectedClients(name).getOutputStream, true).println(s"$username added you in group($groupName)"))
+              groups += (groupName -> (username :: users))
 
               optionSelection
             }
@@ -68,14 +80,14 @@ object Server {
             def broadCast = {
               var message = ""
               while ({ message = in.readLine(); message != null && message != "exit" }) {
-                connectedClients.filter((s) => s._1 != username).map((s) => new PrintWriter(s._2.getOutputStream, true).println(s"BroadCasr($username): $message"))
+                connectedClients.filter((s) => s._1 != username).map((s) => new PrintWriter(s._2.getOutputStream, true).println(s"BroadCast($username): $message"))
                 println(s"$username broadcast a message:- $message")
               }
               optionSelection
             }
 
             def directMessage = {
-              var receiver = in.readLine()
+              val receiver = in.readLine()
               var message = ""
               while ({ message = in.readLine(); message != null && message != "exit" }) {
                 println(s"$username sends $message to $receiver")

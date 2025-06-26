@@ -49,8 +49,8 @@ object Client {
             option match {
               case "a" => directMessage
               case "b" => broadCast
-              case "c" => out.println("c"); println("group message")
-              case "d" => out.println("d"); createGroup
+              case "c" => groupMessage
+              case "d" => createGroup
               case "e" => out.println("e"); println(users); optionSelection
               case "f" => out.println("f"); println("exit")
               case _ => out.println("_"); println("Choose something else"); optionSelection
@@ -58,6 +58,23 @@ object Client {
           }
         }
         optionSelection
+
+        def groupMessage = {
+          out.println("c")
+          println("Choose group:-")
+          var groupName = ""
+          if ({groupName = userInput.readLine(); groupName != null})
+            out.println(groupName)
+
+          println("message:-")
+          var message = ""
+          while ({message = userInput.readLine(); message != null && message != "exit"})
+            out.println(message)
+
+          out.println("exit")
+          
+          optionSelection
+        }
 
         def createGroup = {
           out.println("d")
