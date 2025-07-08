@@ -17,8 +17,6 @@ object Client {
         if ({ username = userInput.readLine(); username != null})
           out.println(username)
 
-        // List of users
-
         var usersString = "";
         if ({ usersString = in.readLine(); usersString != null && usersString.size > 0})
           users = usersString.split(",").toList
