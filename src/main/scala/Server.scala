@@ -9,13 +9,13 @@ object Server {
     implicit val ec: ExecutionContext = ExecutionContext.global
 
     try {
-      val server = new ServerSocket(11111) // This will bind the port 11111
+      val server = new ServerSocket(11111)
       println("Server is running...")
       val connectedClients: mutable.Map[String, Socket] = mutable.Map()
       val groups: mutable.Map[String, List[String]] = mutable.Map()
 
       while (true) {
-        val clientSocket = server.accept() // Accept client connection
+        val clientSocket = server.accept()
         Future {
           handleClient(clientSocket)
         }

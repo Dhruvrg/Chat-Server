@@ -127,3 +127,6 @@ object Client {
     }
   }
 }
+
+// cd .\src\main\scala\
+// scala Client.scala
