@@ -7,12 +7,12 @@ import scala.util.{Failure, Success}
 object Server {
   def main(args: Array[String]): Unit = {
     implicit val ec: ExecutionContext = ExecutionContext.global
+    val connectedClients: mutable.Map[String, Socket] = mutable.Map()
+    val groups: mutable.Map[String, List[String]] = mutable.Map()
 
     try {
-      val server = new ServerSocket(11111)
+      val server = new ServerSocket(11111) 
       println("Server is running...")
-      val connectedClients: mutable.Map[String, Socket] = mutable.Map()
-      val groups: mutable.Map[String, List[String]] = mutable.Map()
 
       while (true) {
         val clientSocket = server.accept()
@@ -110,6 +110,8 @@ object Server {
       // server.close()
     } catch {
       case e: Exception => println("An error occurred: " + e.getMessage)
+    } finally {
+      connectedClients.map((s) => new PrintWriter(s._2.getOutputStream, true).println(s"Server: Server is disconnected"))
     }
   }
 }

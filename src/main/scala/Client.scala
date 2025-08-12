@@ -1,5 +1,7 @@
 import java.net.Socket
 import java.io.{BufferedReader, InputStreamReader, PrintWriter}
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 import scala.util.matching.Regex
 
 object Client {
@@ -9,6 +11,20 @@ object Client {
       val out = new PrintWriter(client.getOutputStream, true)
       val userInput = new BufferedReader(new InputStreamReader(System.in))
       var users: List[String] = List()
+
+      def cleanup(): Unit = {
+        try {
+          in.close()
+          out.close()
+          client.close()
+          userInput.close()
+        } catch {
+          case e: Exception => println(s"Error during cleanup: ${e.getMessage}")
+        }
+        System.exit(0) // exit the JVM immediately
+      }
+
+
       println("Connected to the server. Type your messages:")
 
       try {
@@ -21,28 +37,34 @@ object Client {
         if ({ usersString = in.readLine(); usersString != null && usersString.size > 0})
           users = usersString.split(",").toList
 
-        new Thread(new Runnable {
-          override def run(): Unit = {
-            var serverMessage = ""
-            val connectedPattern: Regex = """Server: (.+) is connected""".r
-            val disconnectedPattern: Regex = """Server: (.+) is disconnected""".r
+        implicit val ec: ExecutionContext = ExecutionContext.global
 
-            while ({serverMessage = in.readLine(); serverMessage != null}) {
-              println(serverMessage)
-              serverMessage match {
-                case connectedPattern(name) => users = name :: users
-                case disconnectedPattern(name) => users = users.filter(_ != name)
-                case _ =>
-              }
+        Future {
+          var serverMessage = ""
+          val connectedPattern: Regex = """Server: (.+) is connected""".r
+          val disconnectedPattern: Regex = """Server: (.+) is disconnected""".r
+
+          while ( {
+            serverMessage = in.readLine(); serverMessage != null
+          }) {
+            println(serverMessage)
+            serverMessage match {
+              case connectedPattern(name) => users = name :: users
+              case disconnectedPattern(name) => users = users.filter(_ != name)
+              case _ =>
             }
           }
-        }).start()
+        }.onComplete {
+          case Success(_) => println("Server message reading stopped.")
+          case Failure(ex) => cleanup()
+        }
+        
         println("Welcome to the server! Type 'exit' to disconnect.")
 
         def optionSelection: Unit = {
           var option = ""
           println("Choose an option")
-          println("a :- Direct Message\nb :- BroadCast Message\nc :- Group Message\nd :- Creat Group\ne :- List User\nf :- Exit")
+          println("a :- Direct Message\nb :- BroadCast Message\nc :- Group Message\nd :- Create Group\ne :- List User\nf :- Exit")
           if ({ option = userInput.readLine(); option != null}){
             option match {
               case "a" => directMessage
@@ -77,6 +99,7 @@ object Client {
         def createGroup = {
           out.println("d")
           println("Name your Group:-")
+          
           var groupName = ""
           if ({groupName = userInput.readLine(); groupName != null})
             out.println(groupName)
@@ -119,11 +142,8 @@ object Client {
     catch {
       case e: Exception => println("An error occurred: " + e.getMessage)
     } finally {
-      in.close()
-      out.close()
-      client.close()
-      userInput.close()
-      println("Disconnected from the server.")
+        cleanup()
+        println("Disconnected from the server.")
     }
   }
 }
