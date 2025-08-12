@@ -1,8 +1,10 @@
-import java.net.Socket
+package chat
+
 import java.io.{BufferedReader, InputStreamReader, PrintWriter}
+import java.net.Socket
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 import scala.util.matching.Regex
+import scala.util.{Failure, Success}
 
 object Client {
   def main(args: Array[String]): Unit = {
@@ -92,7 +94,6 @@ object Client {
             out.println(message)
 
           out.println("exit")
-          
           optionSelection
         }
 
@@ -109,6 +110,7 @@ object Client {
           println("Choose who you want to add in this group, name must be separated by ,")
           if ({groupMembersString = userInput.readLine(); groupMembersString != null})
             out.println(groupMembersString)
+
           optionSelection
         }
 
@@ -148,5 +150,5 @@ object Client {
   }
 }
 
-// cd .\src\main\scala\
+// cd .\src\main\scala\chat
 // scala Client.scala
