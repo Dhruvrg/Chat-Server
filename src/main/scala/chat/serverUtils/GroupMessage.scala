@@ -11,7 +11,7 @@ case class GroupMessage(in: BufferedReader, out: PrintWriter, groups: mutable.Ma
 
     var message = ""
     val users: List[String] = groups(groupName).filter(_ != username)
-    while ( {message = in.readLine(); message != null && message != "exit"}) {
+    while ({ message = in.readLine(); message != null && message != "exit" }) {
       users.foreach((user) => new PrintWriter(connectedClients(user).getOutputStream, true).println(s"Group($groupName):- $username :- $message"))
       println(s"Group($groupName):- $username :- $message")
     }

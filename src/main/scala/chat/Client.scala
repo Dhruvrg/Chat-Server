@@ -1,5 +1,7 @@
 package chat
 
+import chat.clientUtils.{BroadCast, CreateGroup, DirectMessage, GroupMessage}
+
 import java.io.{BufferedReader, InputStreamReader, PrintWriter}
 import java.net.Socket
 import scala.concurrent.{ExecutionContext, Future}
@@ -7,6 +9,7 @@ import scala.util.matching.Regex
 import scala.util.{Failure, Success}
 
 object Client {
+  
   def main(args: Array[String]): Unit = {
       val client = new Socket("localhost", 11111)
       val in = new BufferedReader(new InputStreamReader(client.getInputStream))
@@ -69,10 +72,10 @@ object Client {
           println("a :- Direct Message\nb :- BroadCast Message\nc :- Group Message\nd :- Create Group\ne :- List User\nf :- Exit")
           if ({ option = userInput.readLine(); option != null}){
             option match {
-              case "a" => directMessage
-              case "b" => broadCast
-              case "c" => groupMessage
-              case "d" => createGroup
+              case "a" => DirectMessage(out, userInput, users)(); optionSelection
+              case "b" => BroadCast(out, userInput)(); optionSelection
+              case "c" => GroupMessage(out, userInput)(); optionSelection
+              case "d" => CreateGroup(out, userInput, users)(); optionSelection
               case "e" => out.println("e"); println(users); optionSelection
               case "f" => out.println("f"); println("exit")
               case _ => out.println("_"); println("Choose something else"); optionSelection
@@ -80,66 +83,7 @@ object Client {
           }
         }
         optionSelection
-
-        def groupMessage = {
-          out.println("c")
-          println("Choose group:-")
-          var groupName = ""
-          if ({groupName = userInput.readLine(); groupName != null})
-            out.println(groupName)
-
-          println("message:-")
-          var message = ""
-          while ({message = userInput.readLine(); message != null && message != "exit"})
-            out.println(message)
-
-          out.println("exit")
-          optionSelection
-        }
-
-        def createGroup = {
-          out.println("d")
-          println("Name your Group:-")
-          
-          var groupName = ""
-          if ({groupName = userInput.readLine(); groupName != null})
-            out.println(groupName)
-
-          println(users)
-          var groupMembersString = ""
-          println("Choose who you want to add in this group, name must be separated by ,")
-          if ({groupMembersString = userInput.readLine(); groupMembersString != null})
-            out.println(groupMembersString)
-
-          optionSelection
-        }
-
-        def broadCast = {
-          out.println("b")
-          var message = ""
-          while ( {message = userInput.readLine(); message != null && message != "exit"})
-            out.println(message)
-
-          out.println("exit")
-          optionSelection
-        }
-
-        def directMessage = {
-          out.println("a")
-          println("Choose who you want to DM?")
-          println(users)
-
-          var receiver = ""
-          if ( {receiver = userInput.readLine(); receiver != null})
-            out.println(receiver)
-
-          var message = ""
-          while ({ message = userInput.readLine(); message != null && message != "exit" })
-            out.println(message)
-
-          out.println("exit")
-          optionSelection
-        }
+        
       }
     catch {
       case e: Exception => println("An error occurred: " + e.getMessage)
