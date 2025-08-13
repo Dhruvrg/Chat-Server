@@ -4,8 +4,8 @@ import java.io.{BufferedReader, PrintWriter}
 import java.net.Socket
 import scala.collection.mutable
 
-case class BroadCast(out: PrintWriter, userInput: BufferedReader) {
-  def apply(): Unit = {
+case object BroadCast {
+  def apply(out: PrintWriter, userInput: BufferedReader): Unit = {
     out.println("b")
     var message = ""
     while ({ message = userInput.readLine(); message != null && message != "exit" })
@@ -13,4 +13,7 @@ case class BroadCast(out: PrintWriter, userInput: BufferedReader) {
 
     out.println("exit")
   }
+
+  def unapply(str: String): Option[String] =
+    if (str == "b") Some(str) else None
 }

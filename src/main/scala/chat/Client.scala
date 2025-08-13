@@ -1,7 +1,6 @@
 package chat
 
-import chat.clientUtils.{BroadCast, CreateGroup, DirectMessage, GroupMessage}
-
+import chat.clientUtils.{BroadCast, CloseClient, CreateGroup, DirectMessage, GroupMessage, ListUsers}
 import java.io.{BufferedReader, InputStreamReader, PrintWriter}
 import java.net.Socket
 import scala.concurrent.{ExecutionContext, Future}
@@ -92,12 +91,12 @@ object Client {
           }
           flag = true
           option match {
-            case "a" => DirectMessage(out, userInput, users)(); optionSelection
-            case "b" => BroadCast(out, userInput)(); optionSelection
-            case "c" => GroupMessage(out, userInput)(); optionSelection
-            case "d" => CreateGroup(out, userInput, users)(); optionSelection
-            case "e" => out.println("e"); println(users); optionSelection
-            case "f" => out.println("f"); println("exit")
+            case DirectMessage(str) => DirectMessage(out, userInput, users); optionSelection
+            case BroadCast(str) => BroadCast(out, userInput); optionSelection
+            case GroupMessage(str) => GroupMessage(out, userInput); optionSelection
+            case CreateGroup(str) => CreateGroup(out, userInput, users); optionSelection
+            case ListUsers(str) => ListUsers(out, users); optionSelection
+            case CloseClient(str) => CloseClient(out)
             case _ => out.println("_"); println("Choose something else"); optionSelection
           }
         }

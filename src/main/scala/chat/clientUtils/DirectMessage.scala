@@ -4,8 +4,8 @@ import java.io.{BufferedReader, PrintWriter}
 import java.net.Socket
 import scala.collection.mutable
 
-case class DirectMessage(out: PrintWriter, userInput: BufferedReader, users: List[String]) {
-  def apply(): Unit = {
+case object DirectMessage {
+  def apply(out: PrintWriter, userInput: BufferedReader, users: List[String]): Unit = {
     out.println("a")
     println("Choose who you want to DM?")
     println(users)
@@ -20,4 +20,7 @@ case class DirectMessage(out: PrintWriter, userInput: BufferedReader, users: Lis
 
     out.println("exit")
   }
+
+  def unapply(str: String): Option[String] =
+    if (str == "a") Some(str) else None
 }

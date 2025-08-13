@@ -4,8 +4,8 @@ import java.io.{BufferedReader, PrintWriter}
 import java.net.Socket
 import scala.collection.mutable
 
-case class CreateGroup(out: PrintWriter, userInput: BufferedReader, users: List[String]) {
-  def apply(): Unit = {
+case object CreateGroup {
+  def apply(out: PrintWriter, userInput: BufferedReader, users: List[String]): Unit = {
     out.println("d")
     println("Name your Group:-")
 
@@ -19,4 +19,7 @@ case class CreateGroup(out: PrintWriter, userInput: BufferedReader, users: List[
     if ({ groupMembersString = userInput.readLine(); groupMembersString != null })
       out.println(groupMembersString)
   }
+
+  def unapply(str: String): Option[String] =
+    if (str == "d") Some(str) else None
 }

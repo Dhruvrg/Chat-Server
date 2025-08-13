@@ -4,8 +4,8 @@ import java.io.{BufferedReader, PrintWriter}
 import java.net.Socket
 import scala.collection.mutable
 
-case class GroupMessage(out: PrintWriter, userInput: BufferedReader) {
-  def apply(): Unit = {
+case object GroupMessage {
+  def apply(out: PrintWriter, userInput: BufferedReader): Unit = {
     out.println("c")
     println("Choose group:-")
     var groupName = ""
@@ -19,4 +19,7 @@ case class GroupMessage(out: PrintWriter, userInput: BufferedReader) {
 
     out.println("exit")
   }
+
+  def unapply(str: String): Option[String] =
+    if (str == "c") Some(str) else None
 }
