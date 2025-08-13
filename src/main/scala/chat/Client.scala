@@ -9,13 +9,15 @@ import scala.util.matching.Regex
 import scala.util.{Failure, Success}
 
 object Client {
-  
+
   def main(args: Array[String]): Unit = {
       val client = new Socket("localhost", 11111)
       val in = new BufferedReader(new InputStreamReader(client.getInputStream))
       val out = new PrintWriter(client.getOutputStream, true)
-      val userInput = new BufferedReader(new InputStreamReader(System.in))
+      val SystemIn = System.in
+      val userInput = new BufferedReader(new InputStreamReader(SystemIn))
       var users: List[String] = List()
+      var flag: Boolean = true
 
       def cleanup(): Unit = {
         try {
@@ -26,9 +28,21 @@ object Client {
         } catch {
           case e: Exception => println(s"Error during cleanup: ${e.getMessage}")
         }
-        System.exit(0) // exit the JVM immediately
+        System.exit(0)
       }
 
+      def serverFail(): Unit = {
+        try {
+          flag = false
+          in.close()
+          out.close()
+          client.close()
+          userInput.close()
+        } catch {
+          case e: Exception => println(s"Error during cleanup: ${e.getMessage}")
+        }
+        System.exit(0)
+      }
 
       println("Connected to the server. Type your messages:")
 
@@ -61,38 +75,40 @@ object Client {
           }
         }.onComplete {
           case Success(_) => println("Server message reading stopped.")
-          case Failure(ex) => cleanup()
+          case Failure(ex) => serverFail()
         }
-        
+
         println("Welcome to the server! Type 'exit' to disconnect.")
 
         def optionSelection: Unit = {
-          var option = ""
+          var option = "f"
           println("Choose an option")
           println("a :- Direct Message\nb :- BroadCast Message\nc :- Group Message\nd :- Create Group\ne :- List User\nf :- Exit")
-          if ({ option = userInput.readLine(); option != null}){
-            option match {
-              case "a" => DirectMessage(out, userInput, users)(); optionSelection
-              case "b" => BroadCast(out, userInput)(); optionSelection
-              case "c" => GroupMessage(out, userInput)(); optionSelection
-              case "d" => CreateGroup(out, userInput, users)(); optionSelection
-              case "e" => out.println("e"); println(users); optionSelection
-              case "f" => out.println("f"); println("exit")
-              case _ => out.println("_"); println("Choose something else"); optionSelection
+          while (flag){
+            if (SystemIn.available() > 0) {
+                option = userInput.readLine()
+                flag = false
             }
+          }
+          flag = true
+          option match {
+            case "a" => DirectMessage(out, userInput, users)(); optionSelection
+            case "b" => BroadCast(out, userInput)(); optionSelection
+            case "c" => GroupMessage(out, userInput)(); optionSelection
+            case "d" => CreateGroup(out, userInput, users)(); optionSelection
+            case "e" => out.println("e"); println(users); optionSelection
+            case "f" => out.println("f"); println("exit")
+            case _ => out.println("_"); println("Choose something else"); optionSelection
           }
         }
         optionSelection
-        
+
       }
     catch {
-      case e: Exception => println("An error occurred: " + e.getMessage)
+      case e: Exception => println("An error occurred:- " + e.getMessage)
     } finally {
         cleanup()
         println("Disconnected from the server.")
     }
   }
 }
-
-// cd .\src\main\scala\chat
-// scala Client.scala
