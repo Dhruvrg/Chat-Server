@@ -4,8 +4,8 @@ import java.io.{BufferedReader, PrintWriter}
 import java.net.Socket
 import scala.collection.mutable
 
-case class DirectMessage(in: BufferedReader, connectedClients: mutable.Map[String, Socket], username: String) {
-  def apply(): Unit = {
+case object DirectMessage {
+  def apply(in: BufferedReader, connectedClients: mutable.Map[String, Socket], username: String): Unit = {
     val receiver = in.readLine()
     var message = ""
     while ({ message = in.readLine(); message != null && message != "exit" }) {
@@ -13,4 +13,7 @@ case class DirectMessage(in: BufferedReader, connectedClients: mutable.Map[Strin
       new PrintWriter(connectedClients(receiver).getOutputStream, true).println(s"$username: $message") // Echo the message back to the client
     }
   }
+
+  def unapply(str: String): Option[String] =
+    if (str == "a") Some(str) else None
 }

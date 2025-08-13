@@ -4,8 +4,8 @@ import java.io.{BufferedReader, PrintWriter}
 import java.net.Socket
 import scala.collection.mutable
 
-case class GroupMessage(in: BufferedReader, out: PrintWriter, groups: mutable.Map[String, List[String]], connectedClients: mutable.Map[String, Socket], username: String) {
-  def apply(): Unit = {
+case object GroupMessage {
+  def apply(in: BufferedReader, out: PrintWriter, groups: mutable.Map[String, List[String]], connectedClients: mutable.Map[String, Socket], username: String): Unit = {
     out.println(groups.filter((ele) => ele._2.count(_ == username) == 1).map(_._1).mkString(","))
     val groupName = in.readLine()
 
@@ -16,4 +16,7 @@ case class GroupMessage(in: BufferedReader, out: PrintWriter, groups: mutable.Ma
       println(s"Group($groupName):- $username :- $message")
     }
   }
+
+  def unapply(str: String): Option[String] =
+    if (str == "c") Some(str) else None
 }

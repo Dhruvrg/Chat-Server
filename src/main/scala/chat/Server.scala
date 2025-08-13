@@ -1,6 +1,6 @@
 package chat
 
-import chat.serverUtils.{BroadCast, CreateGroup, DirectMessage, GroupMessage}
+import chat.serverUtils.{BroadCast, CloseClient, CreateGroup, DirectMessage, GroupMessage, ListUsers}
 
 import java.io.{BufferedReader, InputStreamReader, PrintWriter}
 import java.net.{ServerSocket, Socket}
@@ -41,12 +41,12 @@ object Server {
               var option = ""
               if ({ option = in.readLine(); option != null }) {
                 option match {
-                  case "a" => DirectMessage(in, connectedClients, username)(); optionSelection
-                  case "b" => BroadCast(in, connectedClients, username)(); optionSelection
-                  case "c" => GroupMessage(in, out, groups, connectedClients, username)(); optionSelection
-                  case "d" => CreateGroup(in, out, groups, connectedClients, username)(); optionSelection
-                  case "e" => optionSelection
-                  case "f" => // exit
+                  case DirectMessage(str) => DirectMessage(in, connectedClients, username); optionSelection
+                  case BroadCast(str) => BroadCast(in, connectedClients, username); optionSelection
+                  case GroupMessage(str) => GroupMessage(in, out, groups, connectedClients, username); optionSelection
+                  case CreateGroup(str) => CreateGroup(in, out, groups, connectedClients, username); optionSelection
+                  case ListUsers(str) => optionSelection
+                  case CloseClient(str) => // exit
                   case _   => println("Choose something else"); optionSelection
                 }
               }
