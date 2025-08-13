@@ -4,7 +4,7 @@ import java.io.PrintWriter
 
 case object CloseClient {
 
-  def apply(out: PrintWriter): Unit = {
+  def execute(out: PrintWriter): Unit = {
     out.println("f") 
     println("exit")
   }

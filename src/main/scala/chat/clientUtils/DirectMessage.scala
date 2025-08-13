@@ -5,7 +5,8 @@ import java.net.Socket
 import scala.collection.mutable
 
 case object DirectMessage {
-  def apply(out: PrintWriter, userInput: BufferedReader, users: List[String]): Unit = {
+  
+  def execute(out: PrintWriter, userInput: BufferedReader, users: List[String]): Unit = {
     out.println("a")
     println("Choose who you want to DM?")
     println(users)

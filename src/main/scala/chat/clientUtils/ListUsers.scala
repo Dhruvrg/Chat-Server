@@ -4,7 +4,7 @@ import java.io.PrintWriter
 
 case object ListUsers {
 
-  def apply(out: PrintWriter, users: List[String]): Unit = {
+  def execute(out: PrintWriter, users: List[String]): Unit = {
     out.println("e")
     println(users)
   }

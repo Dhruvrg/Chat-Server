@@ -5,7 +5,7 @@ import java.net.Socket
 import scala.collection.mutable
 
 case object CreateGroup {
-  def apply(in: BufferedReader, out: PrintWriter, groups: mutable.Map[String, List[String]], connectedClients: mutable.Map[String, Socket], username: String): Unit = {
+  def execute(in: BufferedReader, out: PrintWriter, groups: mutable.Map[String, List[String]], connectedClients: mutable.Map[String, Socket], username: String): Unit = {
     val groupName = in.readLine()
     val groupMembersString = in.readLine()
 

@@ -5,7 +5,8 @@ import java.net.Socket
 import scala.collection.mutable
 
 case object GroupMessage {
-  def apply(out: PrintWriter, userInput: BufferedReader): Unit = {
+  
+  def execute(out: PrintWriter, userInput: BufferedReader): Unit = {
     out.println("c")
     println("Choose group:-")
     var groupName = ""

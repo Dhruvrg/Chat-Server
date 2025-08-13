@@ -30,19 +30,6 @@ object Client {
         System.exit(0)
       }
 
-      def serverFail(): Unit = {
-        try {
-          flag = false
-          in.close()
-          out.close()
-          client.close()
-          userInput.close()
-        } catch {
-          case e: Exception => println(s"Error during cleanup: ${e.getMessage}")
-        }
-        System.exit(0)
-      }
-
       println("Connected to the server. Type your messages:")
 
       try {
@@ -74,7 +61,7 @@ object Client {
           }
         }.onComplete {
           case Success(_) => println("Server message reading stopped.")
-          case Failure(ex) => serverFail()
+          case Failure(ex) => flag = false; cleanup()
         }
 
         println("Welcome to the server! Type 'exit' to disconnect.")
@@ -91,12 +78,12 @@ object Client {
           }
           flag = true
           option match {
-            case DirectMessage(str) => DirectMessage(out, userInput, users); optionSelection
-            case BroadCast(str) => BroadCast(out, userInput); optionSelection
-            case GroupMessage(str) => GroupMessage(out, userInput); optionSelection
-            case CreateGroup(str) => CreateGroup(out, userInput, users); optionSelection
-            case ListUsers(str) => ListUsers(out, users); optionSelection
-            case CloseClient(str) => CloseClient(out)
+            case DirectMessage(str) => DirectMessage.execute(out, userInput, users); optionSelection
+            case BroadCast(str) => BroadCast.execute(out, userInput); optionSelection
+            case GroupMessage(str) => GroupMessage.execute(out, userInput); optionSelection
+            case CreateGroup(str) => CreateGroup.execute(out, userInput, users); optionSelection
+            case ListUsers(str) => ListUsers.execute(out, users); optionSelection
+            case CloseClient(str) => CloseClient.execute(out)
             case _ => out.println("_"); println("Choose something else"); optionSelection
           }
         }

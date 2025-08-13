@@ -5,7 +5,8 @@ import java.net.Socket
 import scala.collection.mutable
 
 case object BroadCast {
-  def apply(out: PrintWriter, userInput: BufferedReader): Unit = {
+  
+  def execute(out: PrintWriter, userInput: BufferedReader): Unit = {
     out.println("b")
     var message = ""
     while ({ message = userInput.readLine(); message != null && message != "exit" })

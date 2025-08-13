@@ -41,10 +41,10 @@ object Server {
               var option = ""
               if ({ option = in.readLine(); option != null }) {
                 option match {
-                  case DirectMessage(str) => DirectMessage(in, connectedClients, username); optionSelection
-                  case BroadCast(str) => BroadCast(in, connectedClients, username); optionSelection
-                  case GroupMessage(str) => GroupMessage(in, out, groups, connectedClients, username); optionSelection
-                  case CreateGroup(str) => CreateGroup(in, out, groups, connectedClients, username); optionSelection
+                  case DirectMessage(str) => DirectMessage.execute(in, connectedClients, username); optionSelection
+                  case BroadCast(str) => BroadCast.execute(in, connectedClients, username); optionSelection
+                  case GroupMessage(str) => GroupMessage.execute(in, out, groups, connectedClients, username); optionSelection
+                  case CreateGroup(str) => CreateGroup.execute(in, out, groups, connectedClients, username); optionSelection
                   case ListUsers(str) => optionSelection
                   case CloseClient(str) => // exit
                   case _   => println("Choose something else"); optionSelection

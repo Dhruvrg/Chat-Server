@@ -5,7 +5,7 @@ import java.net.Socket
 import scala.collection.mutable
 
 case object DirectMessage {
-  def apply(in: BufferedReader, connectedClients: mutable.Map[String, Socket], username: String): Unit = {
+  def execute(in: BufferedReader, connectedClients: mutable.Map[String, Socket], username: String): Unit = {
     val receiver = in.readLine()
     var message = ""
     while ({ message = in.readLine(); message != null && message != "exit" }) {
